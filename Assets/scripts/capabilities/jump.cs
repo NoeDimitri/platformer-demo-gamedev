@@ -66,7 +66,7 @@ public class jump : MonoBehaviour
             jumpBufferCounter -= Time.deltaTime;
         }
 
-        if(jumpBufferCounter > 0)
+        if(jumpBufferCounter >= 0)
         {
             JumpAction();
         }
@@ -96,7 +96,7 @@ public class jump : MonoBehaviour
                 jumpPhase += 1;
             }
 
-            jumpBufferCounter = 0;
+            jumpBufferCounter = -1;
             coyoteCounter = -1;
             isJumping = true;
 
