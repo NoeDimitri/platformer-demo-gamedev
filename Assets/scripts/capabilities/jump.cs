@@ -21,13 +21,6 @@ public class jump : MonoBehaviour
     private bool desiredJump;
     private bool onGround;
 
-    [SerializeField, Range(0f, 1f)] private float coyoteTimeWindow = 0.2f;
-    private float coyoteTimeCounter;
-
-    [SerializeField, Range(0f, 1f)] private float jumpBufferWindow = 0.2f;
-    private float jumpBufferCounter;
-
-
     void Awake()
     {
         body = GetComponent<Rigidbody2D>();
