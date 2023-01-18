@@ -11,6 +11,7 @@ public class jump : MonoBehaviour
     [SerializeField, Range(0f, 5f)] private float downwardMovementMultiplier = 3f;
     [SerializeField, Range(0f, 5f)] private float upwardMovementMultiplier = 1.7f;
     [SerializeField, Range(0f, 0.5f)] private float coyoteTime = 0.1f;
+    [SerializeField, Range(0f, 0.5f)] private float jumpBuffer = 0.1f;
 
 
     private Rigidbody2D body;
@@ -18,7 +19,7 @@ public class jump : MonoBehaviour
     private Vector2 velocity;
 
     private int jumpPhase;
-    private float defaultGravityscale, jumpSpeed, coyoteCounter;
+    private float defaultGravityscale, jumpSpeed, coyoteCounter, jumpBufferCounter;
 
     private bool desiredJump, onGround, isJumping;
 
@@ -58,6 +59,15 @@ public class jump : MonoBehaviour
         if(desiredJump)
         {
             desiredJump = false;
+            jumpBufferCounter = jumpBuffer;
+        }
+        else if(!desiredJump && jumpBufferCounter > 0)
+        {
+            jumpBufferCounter -= Time.deltaTime;
+        }
+
+        if(jumpBufferCounter > 0)
+        {
             JumpAction();
         }
 
@@ -65,7 +75,7 @@ public class jump : MonoBehaviour
         {
             body.gravityScale = upwardMovementMultiplier;
         }
-        else if (input.RetrieveJumpHoldInput() || body.velocity.y < 0f)
+        else if (!input.RetrieveJumpHoldInput() || body.velocity.y < 0f)
         {
             body.gravityScale = downwardMovementMultiplier;
         }
@@ -86,6 +96,7 @@ public class jump : MonoBehaviour
                 jumpPhase += 1;
             }
 
+            jumpBufferCounter = 0;
             coyoteCounter = -1;
             isJumping = true;
 
