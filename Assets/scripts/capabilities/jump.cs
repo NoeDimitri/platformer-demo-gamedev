@@ -47,10 +47,15 @@ public class jump : MonoBehaviour
             jumpPhase = 0;
         }
 
+
         if(desiredJump)
         {
             desiredJump = false;
             JumpAction();
+        }
+        else
+        {
+
         }
 
         if(body.velocity.y > 0f)

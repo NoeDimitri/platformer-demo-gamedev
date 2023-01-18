@@ -16,4 +16,10 @@ public class aiController : inputController
         return true;
 
     }
+
+    public override bool RetrieveJumpHoldInput()
+    {
+        return false;
+
+    }
 }
