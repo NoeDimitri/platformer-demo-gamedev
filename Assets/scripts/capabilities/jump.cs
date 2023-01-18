@@ -10,18 +10,19 @@ public class jump : MonoBehaviour
     [SerializeField, Range(0, 5)] private int maxAirJumps = 0;
     [SerializeField, Range(0f, 5f)] private float downwardMovementMultiplier = 3f;
     [SerializeField, Range(0f, 5f)] private float upwardMovementMultiplier = 1.7f;
+    [SerializeField, Range(0f, 0.5f)] private float coyoteTime = 0.1f;
+
 
     private Rigidbody2D body;
     private ground ground;
     private Vector2 velocity;
 
     private int jumpPhase;
-    private float defaultGravityscale;
+    private float defaultGravityscale, jumpSpeed, coyoteCounter;
 
-    private bool desiredJump;
-    private bool onGround;
+    private bool desiredJump, onGround, isJumping;
 
-    void Awake()
+    private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         ground = GetComponent<ground>();
@@ -42,9 +43,15 @@ public class jump : MonoBehaviour
         onGround = ground.getOnGround();
         velocity = body.velocity;
 
-        if(onGround)
+        if(onGround && body.velocity.y == 0)
         {
             jumpPhase = 0;
+            coyoteCounter = coyoteTime;
+            isJumping= false;
+        }
+        else
+        {
+            coyoteCounter -= Time.deltaTime;
         }
 
 
@@ -53,16 +60,12 @@ public class jump : MonoBehaviour
             desiredJump = false;
             JumpAction();
         }
-        else
-        {
 
-        }
-
-        if(body.velocity.y > 0f)
+        if(input.RetrieveJumpHoldInput() && body.velocity.y > 0f)
         {
             body.gravityScale = upwardMovementMultiplier;
         }
-        else if (body.velocity.y < 0f)
+        else if (input.RetrieveJumpHoldInput() || body.velocity.y < 0f)
         {
             body.gravityScale = downwardMovementMultiplier;
         }
@@ -76,9 +79,16 @@ public class jump : MonoBehaviour
 
     private void JumpAction()
     {
-        if(onGround || jumpPhase < maxAirJumps)
+        if(coyoteCounter >= 0 || jumpPhase < maxAirJumps)
         {
-            jumpPhase += 1;
+            if(isJumping)
+            {
+                jumpPhase += 1;
+            }
+
+            coyoteCounter = -1;
+            isJumping = true;
+
             float jumpSpeed = Mathf.Sqrt(-2f * Physics2D.gravity.y * jumpHeight);
             if(velocity.y > 0f)
             {
