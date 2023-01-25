@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace Shinjingi
 {
+
+    [RequireComponent(typeof(inputController))]
     public class wallInteractor : MonoBehaviour
     {
         [SerializeField] private inputController controller;
@@ -15,13 +17,17 @@ namespace Shinjingi
         [Header("Wall Jump")]
         [SerializeField] private Vector2 wallJumpClimb = new Vector2(4f, 12f);
         [SerializeField] private Vector2 wallJumpBounce = new Vector2(10.7f, 10f);
+        [SerializeField] private Vector2 wallJumpLeap = new Vector2(14f, 12f);
 
         private ground collisionDataRetriever;
         private Rigidbody2D body;
 
         private Vector2 velocity;
-        private bool onWall, onGround, desiredJump, wallJumping;
+        private bool onWall, onGround, desiredJump;
+        public bool wallJumping { get; private set; }
         private float wallDirectionX;
+
+
 
         // Start is called before the first frame update
         void Start()
@@ -76,6 +82,12 @@ namespace Shinjingi
                 else if(controller.RetrieveMoveInput() == 0)
                 {
                     velocity = new Vector2(wallJumpBounce.x*wallDirectionX, wallJumpBounce.y);
+                    wallJumping = true;
+                    desiredJump = false;
+                }
+                else
+                {
+                    velocity = new Vector2(wallJumpLeap.x * wallDirectionX, wallJumpLeap.y);
                     wallJumping = true;
                     desiredJump = false;
                 }
