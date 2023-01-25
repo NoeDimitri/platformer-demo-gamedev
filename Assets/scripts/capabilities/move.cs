@@ -15,6 +15,8 @@ public class move : MonoBehaviour
     [SerializeField, Range(0f, 100f)] private float maxAirAcceleration = 20f;
 
     [SerializeField, Range(0f, 50f)] private float deceleration = 5f;
+    [SerializeField, Range(0f, 200f)] private float reverseDeceleration = 5f;
+
     [SerializeField, Range(0.05f, 0.5f)] private float wallStickTime = 0.25f;
 
 
@@ -25,8 +27,9 @@ public class move : MonoBehaviour
     private ground ground;
 
     private float maxSpeedChange;
-    private float acceleration, wallStickCounter;
-    private bool onGround;
+    private float acceleration, wallStickCounter, tempDecelleration, tempMaxSpeed;
+    private bool onGround, changingDirection;
+
 
     private wallInteractor interactor;
 
@@ -43,6 +46,10 @@ public class move : MonoBehaviour
     {
         direction.x = input.RetrieveMoveInput();
         //desiredVelocity = new Vector2(direction.x, 0f) * Mathf.Max(maxSpeed - ground.getFriction(), 0f);
+        changingDirection = false;
+
+        changingDirection = Mathf.Sign(direction.x) != Mathf.Sign(body.velocity.x) && input.RetrieveMoveInput() != 0;
+
         desiredVelocity = new Vector2(direction.x, 0f) * Mathf.Max(maxSpeed - deceleration, 0f);
 
     }
@@ -53,6 +60,7 @@ public class move : MonoBehaviour
         velocity = body.velocity;
 
         acceleration = onGround ? maxAcceleration : maxAirAcceleration;
+        acceleration = onGround && changingDirection ? reverseDeceleration: acceleration;
         maxSpeedChange = acceleration * Time.deltaTime;
         velocity.x = Mathf.MoveTowards(velocity.x, desiredVelocity.x, maxSpeedChange);
 

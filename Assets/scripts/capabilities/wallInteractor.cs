@@ -6,7 +6,6 @@ using UnityEngine;
 namespace Shinjingi
 {
 
-    [RequireComponent(typeof(inputController))]
     public class wallInteractor : MonoBehaviour
     {
         [SerializeField] private inputController controller;
