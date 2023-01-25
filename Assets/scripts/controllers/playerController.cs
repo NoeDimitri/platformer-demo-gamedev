@@ -11,6 +11,11 @@ public class playerController : inputController
         return Input.GetAxisRaw("Horizontal");
     }
 
+    public override float RetrieveVerticalInput()
+    {
+        return Input.GetAxisRaw("Vertical");
+    }
+
     public override bool RetrieveJumpInput()
     {
         return Input.GetButtonDown("Jump");
@@ -19,6 +24,11 @@ public class playerController : inputController
     public override bool RetrieveJumpHoldInput()
     {
         return Input.GetButton("Jump");
+
+    }
+    public override bool retrieveDashInput()
+    {
+        return Input.GetKey(KeyCode.LeftShift);
 
     }
 }

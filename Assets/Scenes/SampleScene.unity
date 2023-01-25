@@ -1714,12 +1714,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   input: {fileID: 11400000, guid: d78f27bc4e7637a46ba37cc9647f4e26, type: 2}
-  jumpHeight: 6
+  jumpHeight: 8.18
   maxAirJumps: 0
-  downwardMovementMultiplier: 3.37
+  downwardMovementMultiplier: 4.09
   upwardMovementMultiplier: 1.7
   coyoteTime: 0.1
   jumpBuffer: 0.05
+  hasDashColor: {r: 1, g: 0.3647059, b: 0.3647059, a: 1}
+  noDashColor: {r: 0.35857958, g: 0.6735011, b: 0.9622642, a: 1}
+  dashStrength: 41.3
+  dashDuration: 0.1
+  drag: 47.6
+  dragLoss: 8
 --- !u!114 &732716823
 MonoBehaviour:
   m_ObjectHideFlags: 0

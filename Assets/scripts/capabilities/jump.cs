@@ -13,6 +13,15 @@ public class jump : MonoBehaviour
     [SerializeField, Range(0f, 0.5f)] private float coyoteTime = 0.1f;
     [SerializeField, Range(0f, 0.5f)] private float jumpBuffer = 0.1f;
 
+    private SpriteRenderer sprite;
+    public Color hasDashColor, noDashColor;
+
+    [Header("Dash Attributes")]
+    [SerializeField, Range(1f, 50f)] private float dashStrength;
+    [SerializeField, Range(0f, 0.5f)] private float dashDuration = 0.1f;
+    [SerializeField, Range(0f, 50f)] private float drag;
+    [SerializeField, Range(0f, 50f)] private float dragLoss;
+
 
     private Rigidbody2D body;
     private ground ground;
@@ -21,16 +30,18 @@ public class jump : MonoBehaviour
     private int jumpPhase;
     private float defaultGravityscale, jumpSpeed, coyoteCounter, jumpBufferCounter;
 
-    private bool desiredJump, onGround, isJumping;
+    private bool desiredJump, onGround, isJumping, canDash, gravityDisabled;
 
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         ground = GetComponent<ground>();
+        sprite = GetComponent<SpriteRenderer>();
 
         defaultGravityscale = 1f;
         desiredJump = false;
         jumpBufferCounter = -0.1f;
+        canDash = true;
     }
 
     // Update is called once per frame
@@ -43,12 +54,15 @@ public class jump : MonoBehaviour
 
     private void FixedUpdate()
     {
+        body.drag = Mathf.Max(dragLoss * Time.deltaTime, 0);
+
         onGround = ground.getOnGround();
         velocity = body.velocity;
 
         if(onGround && body.velocity.y == 0)
         {
             jumpPhase = 0;
+            refreshDash();
             coyoteCounter = coyoteTime;
             isJumping= false;
         }
@@ -58,7 +72,7 @@ public class jump : MonoBehaviour
         }
 
 
-        if(desiredJump)
+        if (desiredJump)
         {
             desiredJump = false;
             jumpBufferCounter = jumpBuffer;
@@ -86,7 +100,21 @@ public class jump : MonoBehaviour
             body.gravityScale = defaultGravityscale;
         }
 
+        if(gravityDisabled)
+        {
+            body.gravityScale = 0;
+        }
+
         body.velocity = velocity;
+
+        
+
+        if (input.retrieveDashInput() && canDash)
+        {
+
+            dash(input.RetrieveMoveInput(), input.RetrieveVerticalInput());
+
+        }
     }
 
     private void JumpAction()
@@ -109,5 +137,34 @@ public class jump : MonoBehaviour
             }
             velocity.y += jumpSpeed;
         }
+    }
+    private void dash(float x, float y)
+    {
+        canDash = false;
+        sprite.color = noDashColor;
+        body.gravityScale = 0;
+        body.velocity = Vector2.zero;
+        body.velocity = new Vector2(x, y).normalized * dashStrength;
+        body.drag = drag;
+        gravityDisabled = true;
+
+        //if( Mathf.Abs(y) != 1 || Mathf.Abs(x) == 1) 
+        StartCoroutine(tempGravityRemoval());
+    }
+
+    public void refreshDash()
+    {
+        sprite.color = hasDashColor;
+
+        canDash = true;
+
+    }
+
+    IEnumerator tempGravityRemoval()
+    {
+        
+        yield return new WaitForSeconds(dashDuration);
+        gravityDisabled = false;
+
     }
 }
