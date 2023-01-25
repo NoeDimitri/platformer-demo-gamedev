@@ -29,6 +29,7 @@ public class jump : MonoBehaviour
         ground = GetComponent<ground>();
 
         defaultGravityscale = 1f;
+        desiredJump = false;
     }
 
     // Update is called once per frame
